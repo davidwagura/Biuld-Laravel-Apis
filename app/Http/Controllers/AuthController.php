@@ -18,12 +18,12 @@ class AuthController extends Controller
     {
         $request->validated($request->all());
 
-        if(!Auth::attempt([$request->only('email', 'password')])) {
+        if(!Auth::attempt($request->only(['email', 'password']))) {
             return $this->error("", 'Credentials do not match', 401);
         }
 
         $user = User::where('email', $request->email)->first();
-        
+
         return $this->success([
             'user' => $user,
             'token' => $user->createToken('Api Token of'. $user->name)->plainTextToken
@@ -33,7 +33,6 @@ class AuthController extends Controller
 
     public function register(StoreUserRequest $request)
     {
-        return response()->json($request->all());
 
         $user = User::create([
             'name' => $request->name,
@@ -45,6 +44,8 @@ class AuthController extends Controller
             'user' => $user,
             'token' => $user->createToken('Api Token of'. $user->name)->plainTextToken
         ]);
+        return response()->json($request->all());
+
     }
 
     public function logout()
